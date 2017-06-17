@@ -8,6 +8,7 @@ package VioletSyntaxAnalyzer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  *
@@ -49,7 +50,20 @@ public class ProductionRule {
     @Override
     public boolean equals(Object obj){
         if(!(obj instanceof ProductionRule))return false;
-        
+        ProductionRule rule=(ProductionRule)obj;
+        if(!producer.equals(rule.producer)||rule.products.size()!=products.size())return false;
+        for(int i=0;i<products.size();i++){
+            if(!products.get(i).equals(rule.products.get(i))) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode(){
+        int hash=7;
+        hash=83*hash+Objects.hashCode(this.producer);
+        hash+=23*hash+Objects.hashCode(this.products);
+        return hash;
     }
     
     
