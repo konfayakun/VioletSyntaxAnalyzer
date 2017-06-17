@@ -1,1 +1,1 @@
-"# VioletSyntaxAnalyzer" 
+# VioletSyntaxAnalyzer
