@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author Violets
  */
-public class Item extends Term{
+public class Item extends Term implements Cloneable{
     int location;
     public Item(Alphabet... atoms){
         super(atoms);
@@ -23,10 +23,17 @@ public class Item extends Term{
         super(alphas);
         location=0;
     }
+     public Item(ArrayList<Alphabet> alphas,int location){
+        super(alphas);
+        this.location=location;
+    }
     public Alphabet getNextAlphabet() throws Exception{
         if(location>=alphas.size()) throw new Exception("Item is Finished");
         location++;
         return alphas.get(location-1);
+    }
+    public Alphabet getCurrentAlphabet(){
+        return alphas.get(location);
     }
 
     @Override
@@ -41,5 +48,21 @@ public class Item extends Term{
         hash=71*hash+this.location+super.hashCode();
         return hash;
     }
+
+    @Override
+    protected Object clone(){
+        return new Item(alphas,location);
+    }
+
+    @Override
+    public String toString(){
+        String str="";
+        for(int i=0;i<alphas.size();i++){
+            if(i==location)str+=".";
+            str+=alphas.get(i);
+        }
+        return str;
+    }
+    
     
 }

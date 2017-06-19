@@ -148,6 +148,35 @@ public class Utils {
         return new TableObject(table,nonTerminalIndexes,terminalIndexes);
     }
     
+    public static ArrayList<ProductionRule> closureizeRules(ProductionRule rule){
+        ArrayList<ProductionRule> rules=new ArrayList<>();
+        for(Term term:rule.products){
+            ProductionRule newRule=new ProductionRule(rule.producer,new Item(term.alphas));
+            rules.add(newRule);
+        }
+        System.out.println(rules);
+        return rules;
+    }
+    
+    public static ArrayList<ProductionRule> closureizeRule(ProductionRule rule,Set<NonTerminal> additionalNonTerminals,Set<NonTerminal> forbidden){
+        ArrayList<ProductionRule> rules=new ArrayList<>();
+        for(Term term:rule.products){
+            if(term instanceof Item){
+                if(!term.isLambda() && ((Item)term).getCurrentAlphabet() instanceof NonTerminal && !forbidden.contains(((Item)term).getCurrentAlphabet())){
+                    additionalNonTerminals.add((NonTerminal)((Item)term).getCurrentAlphabet());
+                }
+                continue;
+            }
+            if(!term.isLambda() && term.alphas.get(0) instanceof NonTerminal && ! forbidden.contains(term.alphas.get(0))){
+                additionalNonTerminals.add((NonTerminal)term.alphas.get(0));
+            }
+            ProductionRule newRule=new ProductionRule(rule.producer,new Item(term.alphas));
+            rules.add(newRule);
+        }
+        System.out.println(rules);
+        return rules;
+    }
+    
     public static void parseString(String inputString,String seprator,Grammar Grammar){
         System.out.println("Start parsing process (processing \""+inputString+"\") :");
         TableObject tableObject=getLLTable(Grammar);

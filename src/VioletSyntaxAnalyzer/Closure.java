@@ -8,7 +8,9 @@ package VioletSyntaxAnalyzer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  *
@@ -17,12 +19,24 @@ import java.util.Objects;
 public class Closure {
     ArrayList<ProductionRule> rules;
 
-    public Closure(Grammar Grammar,boolean ready,ProductionRule... rules){
+    public Closure(Grammar grammar,ProductionRule... rules){
         this.rules=new ArrayList<>();
-        this.rules.addAll(Arrays.asList(rules));
-        if(ready) return;
+        Set<NonTerminal> additionalNonTerminals=new HashSet<>();
+        Set<NonTerminal> forbiden=new HashSet<>();
         for(ProductionRule rule:rules){
-            
+            this.rules.addAll(Utils.closureizeRule(rule,additionalNonTerminals,forbiden));
+        }
+        while(!additionalNonTerminals.isEmpty()){
+            for(NonTerminal nonTerminal:additionalNonTerminals){
+                forbiden.add(nonTerminal);
+                ProductionRule rule= grammar.getRuleByProducer(nonTerminal);
+                for(ProductionRule closurizedRule: Utils.closureizeRule(rule,additionalNonTerminals,forbiden)){
+                    if(!this.rules.contains(closurizedRule)){
+                        this.rules.add(closurizedRule);
+                    }
+                }
+                additionalNonTerminals.remove(nonTerminal);
+            }
         }
     }
     
@@ -47,6 +61,17 @@ public class Closure {
         hash=29*hash+Objects.hashCode(this.rules);
         return hash;
     }
+
+    @Override
+    public String toString(){
+        String str="====================\n";
+        for(ProductionRule rule:rules){
+            str+=rule.toString()+"\n";
+        }
+        return str;
+    }
+    
+    
     
     
     
