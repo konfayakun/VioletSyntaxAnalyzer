@@ -161,11 +161,17 @@ public class Utils {
     public static ArrayList<ProductionRule> closureizeRule(ProductionRule rule,Set<NonTerminal> additionalNonTerminals,Set<NonTerminal> forbidden){
         ArrayList<ProductionRule> rules=new ArrayList<>();
         for(Term term:rule.products){
+
+            if(term.isLambda())continue;
             if(term instanceof Item){
-                if(!term.isLambda() && ((Item)term).getCurrentAlphabet() instanceof NonTerminal && !forbidden.contains(((Item)term).getCurrentAlphabet())){
-                    additionalNonTerminals.add((NonTerminal)((Item)term).getCurrentAlphabet());
-                }
-                continue;
+                try{
+                    if(!term.isLambda() && ((Item)term).getCurrentAlphabet() instanceof NonTerminal && !forbidden.contains(((Item)term).getCurrentAlphabet())){
+                        additionalNonTerminals.add((NonTerminal)((Item)term).getCurrentAlphabet());
+                    }
+                    rules.add(rule);
+                    continue;
+                }catch(Exception e){rules.add(rule); continue;}
+
             }
             if(!term.isLambda() && term.alphas.get(0) instanceof NonTerminal && ! forbidden.contains(term.alphas.get(0))){
                 additionalNonTerminals.add((NonTerminal)term.alphas.get(0));
@@ -173,11 +179,16 @@ public class Utils {
             ProductionRule newRule=new ProductionRule(rule.producer,new Item(term.alphas));
             rules.add(newRule);
         }
-        System.out.println(rules);
+
         return rules;
     }
     
-    public static void parseString(String inputString,String seprator,Grammar Grammar){
+//    public static HashSet<Closure> getParsingNFA(Grammar grammar){
+//        
+//    }
+    
+    public static void parseStringLL1(String inputString,String seprator,Grammar Grammar){
+
         System.out.println("Start parsing process (processing \""+inputString+"\") :");
         TableObject tableObject=getLLTable(Grammar);
         Stack<Alphabet> stack=new Stack<>();
@@ -225,7 +236,7 @@ public class Utils {
     }
     
     
-    public static JFrame visualizeTableJFrame(Object[][] table){
+    public static JFrame visualizeLLTableJFrame(Object[][] table){
         JFrame frame=new JFrame("Table");
         frame.setPreferredSize(new Dimension(500,500));
         JPanel panel=new JPanel();

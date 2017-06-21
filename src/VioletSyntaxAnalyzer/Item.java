@@ -61,7 +61,8 @@ public class Item extends Term implements Cloneable{
             if(i==location)str+=".";
             str+=alphas.get(i);
         }
-        return str;
+        return (location==alphas.size())?str+".":str;
+
     }
     
     

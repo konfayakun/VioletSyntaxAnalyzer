@@ -65,9 +65,11 @@ public class Main {
             }
             System.out.println("");
         }
-        Utils.visualizeTableJFrame(tableObject.table).setVisible(true);
-        Utils.parseString("id.+.id.*.id","\\.",grammar);
-        Utils.parseString("id.+.id.*.id.+","\\.",grammar);
+
+        Utils.visualizeLLTableJFrame(tableObject.table).setVisible(true);
+        Utils.parseStringLL1("id.+.id.*.id","\\.",grammar);
+        Utils.parseStringLL1("id.+.id.*.id.+","\\.",grammar);
+
         
         System.out.println("");
         System.out.println("Item toString:");
@@ -81,8 +83,20 @@ public class Main {
         
         System.out.println(grammar.rules.get(4));
         Utils.closureizeRules(grammar.rules.get(4));
+
         
-        Closure closure=new Closure(grammar,grammar.rules.get(0));
+        Closure closure=new Closure(grammar,new ProductionRule(new NonTerminal("Start"),new Term(grammar.rules.get(0).producer)));
         System.out.println(closure);
+        System.out.println(closure.getPossibleActions());
+        
+        System.out.println("*************************************************************");
+        System.out.println(closure.nextGeneration(grammar).get(4).nextGeneration(grammar));
+        
+//        System.out.println(closure.relations);
+//        for(Closure cl:closure.nextGeneration(grammar)){
+//            System.out.println(cl);
+//        }
+//        System.out.println(closure.nextGeneration(grammar));
+
     }
 }
